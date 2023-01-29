@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useUserContext } from '../hooks/useUserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Add = () => {
+	const navigate = useNavigate();
+
 	const { users, dispatch } = useUserContext();
 
 	const [first_name, setFirstName] = useState('');
-	const [lastName, setLastName] = useState('');
+	const [last_name, setLastName] = useState('');
 	const [email, setEmail] = useState('');
 	const [emptyFields, setEmptyFields] = useState([]);
 	const [error, setError] = useState(null);
@@ -13,13 +16,13 @@ const Add = () => {
 	const handleAdd = (e) => {
 		e.preventDefault();
 
-		if (!first_name || !lastName || !email) {
+		if (!first_name || !last_name || !email) {
 			setError(true);
 			if (!first_name) {
 				setEmptyFields(...emptyFields, 'firstName');
 			}
 
-			if (!lastName) {
+			if (!last_name) {
 				setEmptyFields(...emptyFields, 'lastName');
 			}
 
@@ -31,18 +34,19 @@ const Add = () => {
 			const newUser = {
 				id: users[users.length - 1].id + 1,
 				first_name,
-				lastName,
+				last_name,
 				email,
 			};
 
 			dispatch({ type: 'ADD_USER', payload: newUser });
+			navigate('/');
 		}
 	};
 
 	const handleCancel = () => {};
 
 	return (
-		<div className="small-container">
+		<div className="container">
 			<form onSubmit={handleAdd}>
 				<h2>Add User</h2>
 				<label htmlFor="first_name">First Name</label>
@@ -57,7 +61,7 @@ const Add = () => {
 				<input
 					id="lastName"
 					type="text"
-					value={lastName}
+					value={last_name}
 					onChange={(e) => setLastName(e.target.value)}
 					className={emptyFields.includes('lastName') ? 'error' : ''}
 				/>

@@ -3,17 +3,18 @@ import { useUserContext } from '../hooks/useUserContext';
 import { Loader } from '../components/Loader';
 
 import { Header } from '../components/Header';
-import Add from '../components/Add';
 import Edit from '../components/Edit';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
+	const navigate = useNavigate();
+
 	const { users, dispatch } = useUserContext();
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [selectedUser, setSelectedUser] = useState([]);
 
 	useEffect(() => {
-		console.log('triggered');
 		const fetchUsers = async () => {
 			const response = await fetch('https://reqres.in/api/users?page=1', {
 				method: 'GET',
@@ -29,7 +30,7 @@ function Dashboard() {
 	}, [dispatch]);
 
 	const handleAdd = (user) => {
-		dispatch({ type: 'ADD_USER', payload: user });
+		navigate('/add');
 	};
 
 	const handleEdit = (user) => {
@@ -59,7 +60,7 @@ function Dashboard() {
 					</thead>
 					<tbody>
 						{users.length > 0 ? (
-							users.map((user) => (
+							users.map((user, index) => (
 								<tr key={user.id}>
 									<td>{user.id}</td>
 									<td>{user.first_name}</td>
@@ -74,7 +75,7 @@ function Dashboard() {
 												Edit
 											</button>
 										)}
-										{isEditing && user.id === selectedUser && (
+										{isEditing && index + 1 === selectedUser && (
 											<span>
 												<Edit selectedUser={user} />
 											</span>
@@ -100,10 +101,8 @@ function Dashboard() {
 			) : (
 				<Loader />
 			)}
-
 			<div className="btn waves-effect waves-light" onClick={() => handleAdd()}>
 				ADD
-				<Add />
 			</div>
 		</div>
 	);

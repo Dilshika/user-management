@@ -1,28 +1,37 @@
 import { useState } from 'react';
 import { useUserContext } from '../hooks/useUserContext';
+import { useNavigate } from 'react-router-dom';
 
 function Edit({ selectedUser }) {
-	const { users, dispatch } = useUserContext();
 	console.log(selectedUser);
+	const { dispatch } = useUserContext();
+	const navigate = useNavigate();
 
 	const [first_name, setFirstName] = useState(selectedUser.first_name);
 	const [last_name, setLastName] = useState(selectedUser.last_name);
 	const [email, setEmail] = useState(selectedUser.email);
+	const id = selectedUser.id;
 
 	const handleUpdate = (e) => {
 		e.preventDefault();
 
 		const updatedUser = {
-			id: users.length,
+			id: id,
 			first_name,
 			last_name,
 			email,
 		};
+
 		dispatch({ type: 'EDIT_USER', payload: updatedUser });
+		handleNavigate();
+	};
+
+	const handleNavigate = () => {
+		navigate('/');
 	};
 
 	return (
-		<div className="small-container">
+		<div className="container">
 			<form onSubmit={handleUpdate}>
 				<h2>Update User</h2>
 				<label htmlFor="firstName">First Name</label>
@@ -48,6 +57,13 @@ function Edit({ selectedUser }) {
 				/>
 				<button className="btn waves-effect waves-light" type="submit">
 					Edit
+				</button>
+				<button
+					className="btn waves-effect waves-light"
+					type="button"
+					onClick={handleNavigate}
+				>
+					Cancel
 				</button>
 			</form>
 		</div>
