@@ -7,54 +7,95 @@ import {
 } from '../actions/postActions';
 
 import Header from '../components/Header';
-import Table from '../components/Table';
 import Edit from '../components/Edit';
-import Delete from '../components/Delete';
 import Add from '../components/Add';
-import { useState } from 'react';
+import { Component } from 'react';
 
-function Dashboard() {
-	//const users = this.props.users;
-	//testing purpose
-	const users = [];
-
-	const [selectedUser, setSelectedUser] = useState(null);
-	const [isAdding, setIsAdding] = useState(false);
-	const [isEditing, setIsEditing] = useState(false);
-	const [isDeleting, setIsDeleting] = useState(false);
-
-	const handleDelete = () => {
-		this.props.deletePost(this.props.users.dispatch);
-		this.post.history.push('/');
-		setIsDeleting(true);
+class Dashboard extends Component {
+	handleAdd = () => {
+		this.props.addUser(this.props.users.dispatch);
 	};
 
-	const handleEdit = () => {
-		this.props.deletePost(this.props.users.dispatch);
-		this.post.history.push('/');
-		setIsEditing(true);
+	handleDelete = () => {
+		this.props.deleteUser(this.props.users.id);
 	};
 
-	const handleAdd = () => {
-		this.props.deletePost(this.props.users.dispatch);
-		this.post.history.push('/');
-		setIsAdding(true);
+	handleEdit = (e) => {
+		const user = this.props.users.find((user) => user.id === e);
+		console.log(e);
+		this.props.editUser(this.props.users.dispatch);
 	};
 
-	return (
-		<>
-			<Header />
-			<Table
-				users={users}
-				handleAdd={handleAdd}
-				handleDelete={handleDelete}
-				handleEdit={handleEdit}
-			/>
-			{isEditing && <Edit user={selectedUser} />}
-			{isAdding && <Add />}
-			{isDeleting && <Delete id={selectedUser.id} />}
-		</>
-	);
+	render() {
+		const users = this.props.users;
+		let isEditing = false;
+		let isAdding = false;
+		let user;
+
+		return (
+			<>
+				<Header />
+				<div className="container">
+					<div className="grid">
+						<table>
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>First Name</th>
+									<th>Last Name</th>
+									<th>Email</th>
+									<th></th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{users.length > 0 ? (
+									users.map((user) => (
+										<tr key={user.id}>
+											<td>{user.id}</td>
+											<td>{user.first_name}</td>
+											<td>{user.last_name}</td>
+											<td>{user.email}</td>
+											<td>
+												<button
+													className="btn waves-effect waves-light"
+													onClick={this.handleAdd}
+												>
+													Add
+												</button>
+											</td>
+											<td>
+												<button
+													className="btn waves-effect waves-light"
+													onClick={this.handleEdit}
+												>
+													Edit
+												</button>
+											</td>
+											<td>
+												<button
+													className="btn waves-effect waves-light"
+													onClick={this.handleDelete}
+												>
+													Delete
+												</button>
+											</td>
+										</tr>
+									))
+								) : (
+									<tr>
+										<td colSpan={15}>No Users</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				{isEditing && <Edit user={user} />}
+				{isAdding && <Add />}
+			</>
+		);
+	}
 }
 
 const mapStateToProps = (state) => {
