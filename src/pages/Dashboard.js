@@ -23,7 +23,6 @@ function Dashboard() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	console.log(this.props);
 	const handleDelete = () => {
 		this.props.deletePost(this.props.users.dispatch);
 		this.post.history.push('/');
