@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useUserContext } from '../hooks/useUserContext';
 
-function Add() {
-	const [firstName, setFirstName] = useState('');
+const Add = () => {
+	const { users, dispatch } = useUserContext();
+
+	const [first_name, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
 	const [emptyFields, setEmptyFields] = useState([]);
@@ -10,17 +13,14 @@ function Add() {
 	const handleAdd = (e) => {
 		e.preventDefault();
 
-		console.log(emptyFields);
-
-		if (!firstName || !lastName || !email) {
+		if (!first_name || !lastName || !email) {
 			setError(true);
-			if (!firstName) {
+			if (!first_name) {
 				setEmptyFields(...emptyFields, 'firstName');
 			}
 
 			if (!lastName) {
 				setEmptyFields(...emptyFields, 'lastName');
-				console.log(emptyFields);
 			}
 
 			if (!email) {
@@ -28,18 +28,28 @@ function Add() {
 			}
 		} else {
 			//update central storage
+			const newUser = {
+				id: users[users.length - 1].id + 1,
+				first_name,
+				lastName,
+				email,
+			};
+
+			dispatch({ type: 'ADD_USER', payload: newUser });
 		}
 	};
+
+	const handleCancel = () => {};
 
 	return (
 		<div className="small-container">
 			<form onSubmit={handleAdd}>
 				<h2>Add User</h2>
-				<label htmlFor="firstName">First Name</label>
+				<label htmlFor="first_name">First Name</label>
 				<input
-					id="firstName"
+					id="first_name"
 					type="text"
-					value={firstName}
+					value={first_name}
 					onChange={(e) => setFirstName(e.target.value)}
 					className={emptyFields.includes('firstName') ? 'error' : ''}
 				/>
@@ -59,13 +69,25 @@ function Add() {
 					onChange={(e) => setEmail(e.target.value)}
 					className={emptyFields.includes('email') ? 'error' : ''}
 				/>
-				<button className="btn waves-effect waves-light" type="submit">
+				<button
+					className="btn waves-effect waves-light"
+					type="submit"
+					value="Add"
+				>
 					Add
+				</button>
+				<button
+					className="btn waves-effect waves-light"
+					type="button"
+					value="Cancel"
+					onClick={() => handleCancel(false)}
+				>
+					Cancel
 				</button>
 				{error && <div className="error">{error}</div>}
 			</form>
 		</div>
 	);
-}
+};
 
 export default Add;
